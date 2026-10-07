@@ -25,6 +25,26 @@ const store = {
   },
 };
 
+/* ---------- Тема ---------- */
+const darkQuery = window.matchMedia('(prefers-color-scheme: dark)');
+const isDark = () => (document.documentElement.dataset.theme || (darkQuery.matches ? 'dark' : 'light')) === 'dark';
+
+function renderThemeBtn() {
+  const dark = isDark();
+  const label = dark ? 'Светлая тема' : 'Тёмная тема';
+  const b = $('#theme');
+  b.setAttribute('aria-pressed', String(dark));
+  b.setAttribute('aria-label', label);
+  b.title = label;
+}
+
+function toggleTheme() {
+  const theme = isDark() ? 'light' : 'dark';
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem('kontrolnaya-theme', theme); } catch { /* хранилище недоступно — тема не запомнится */ }
+  renderThemeBtn();
+}
+
 /* ---------- Навигация ---------- */
 function show(view) {
   for (const id of ['builder', 'quiz', 'printout']) $('#' + id).hidden = id !== view;
@@ -264,6 +284,8 @@ function bind() {
   $('#reshuffle').addEventListener('click', startQuiz);
   $('#quiz-form').addEventListener('submit', checkQuiz);
   $('#questions').addEventListener('change', updateProgress);
+  $('#theme').addEventListener('click', toggleTheme);
+  darkQuery.addEventListener('change', renderThemeBtn);
   document.addEventListener('click', e => {
     const a = e.target.closest('[data-action]');
     if (!a) return;
@@ -273,10 +295,12 @@ function bind() {
 }
 
 /* ---------- Старт ---------- */
+renderThemeBtn();
 renderStats();
 renderSubjects();
 bind();
 const saved = store.load();
+if (saved.subject === 'history') saved.subject = 'russia-history'; // история разделена на два предмета
 if (saved.count) $('#count').value = saved.count;
 if (saved.variants) $('#variants').value = saved.variants;
 if (saved.subject && DB.subjects.some(s => s.id === saved.subject)) selectSubject(saved.subject, saved.grade);

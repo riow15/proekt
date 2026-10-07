@@ -22,8 +22,31 @@
   color-scheme: light;
 }
 
+/* Тёмная тема: включается вручную кнопкой в шапке… */
+:root[data-theme="dark"] {
+  --bg: #12151B;
+  --surface: #1A1E26;
+  --surface-2: #232834;
+  --ink: #ECEEF2;
+  --ink-2: #B6BCC8;
+  --ink-3: #8A91A0;
+  --line: #2C3240;
+  --accent: #5FBFA6;
+  --accent-ink: #0E1A17;
+  --accent-soft: #1F3A34;
+  --good: #5CC98A;
+  --good-soft: #1B3326;
+  --bad: #F2857C;
+  --bad-soft: #3A1F1E;
+  --focus: #7AA5FF;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  color-scheme: dark;
+}
+
+/* …или автоматически по настройке системы, если тема не выбрана */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme]) {
+    --focus: #7AA5FF;
     --bg: #12151B;
     --surface: #1A1E26;
     --surface-2: #232834;
@@ -67,6 +90,15 @@ button, select, input { font: inherit; color: inherit; }
 .brand__mark { width: 32px; height: 32px; border-radius: 9px; background: var(--accent); display: grid; place-items: center; }
 .brand__mark svg { width: 20px; height: 20px; fill: none; stroke: var(--accent-ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
 .topbar__note { color: var(--ink-3); font-size: 14px; }
+.theme-btn {
+  margin-left: auto; width: 40px; height: 40px; border-radius: 10px; border: 1.5px solid var(--line);
+  background: var(--surface); color: var(--ink-2); display: grid; place-items: center; cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+.theme-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.theme-btn__sun, .theme-btn[aria-pressed="true"] .theme-btn__moon { display: none; }
+.theme-btn[aria-pressed="true"] .theme-btn__sun { display: block; }
 
 /* ================= Hero ================= */
 .hero { padding: 40px 0 8px; }
@@ -212,6 +244,8 @@ select {
 @media (max-width: 600px) {
   .step { padding: 16px; }
   .subjects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .topbar__inner { flex-wrap: nowrap; gap: 10px; }
+  .topbar__note { display: none; }
   .topic { flex-wrap: wrap; }
   .topic__name { flex: 1 1 0; min-width: 0; }
   .topic__count { flex-basis: 100%; padding-left: 32px; margin-top: -4px; white-space: normal; }
