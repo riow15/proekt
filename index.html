@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Контрольная — генератор школьных тестов 1–11 класс</title>
+  <meta name="description" content="Генератор тестов по школьной программе Москвы: 15 предметов, 1–11 классы, темы по программе. Прохождение онлайн и печать вариантов с ключом ответов.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231E5B4F'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' stroke='%23fff' stroke-width='3.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="wrap topbar__inner">
+      <a class="brand" href="#" data-action="home" aria-label="На главную">
+        <span class="brand__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        </span>
+        <span class="brand__name">Контрольная</span>
+      </a>
+      <span class="topbar__note">по школьной программе Москвы · 1–11 класс</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- ============ Конструктор ============ -->
+    <section id="builder" class="view">
+      <div class="hero">
+        <h1>Тест за минуту — по&nbsp;любому предмету, классу и&nbsp;теме</h1>
+        <p class="hero__lead">Выберите предмет, класс и темы. Задачи берутся из базы и перемешиваются — каждый тест уникален. Решайте онлайн или распечатайте варианты с ключом ответов.</p>
+        <dl class="stats" id="stats"></dl>
+      </div>
+
+      <ol class="steps">
+        <li class="step" id="step-subject">
+          <h2 class="step__title"><span class="step__num">1</span> Предмет</h2>
+          <div class="subjects" id="subjects" role="list"></div>
+        </li>
+
+        <li class="step is-locked" id="step-grade">
+          <h2 class="step__title"><span class="step__num">2</span> Класс</h2>
+          <div class="grades" id="grades" role="radiogroup" aria-label="Класс"></div>
+          <p class="step__hint" id="grade-hint">Сначала выберите предмет</p>
+        </li>
+
+        <li class="step is-locked" id="step-topics">
+          <div class="step__head">
+            <h2 class="step__title"><span class="step__num">3</span> Темы</h2>
+            <button class="link-btn" id="toggle-all" type="button" hidden>Выбрать все</button>
+          </div>
+          <div class="topics" id="topics"></div>
+          <p class="step__hint" id="topics-hint">Сначала выберите класс</p>
+        </li>
+
+        <li class="step is-locked" id="step-settings">
+          <h2 class="step__title"><span class="step__num">4</span> Параметры</h2>
+          <div class="settings">
+            <label class="field">
+              <span class="field__label">Вопросов в тесте</span>
+              <select id="count">
+                <option>5</option><option selected>10</option><option>15</option><option>20</option><option>25</option><option>30</option>
+              </select>
+            </label>
+            <label class="field">
+              <span class="field__label">Вариантов для печати</span>
+              <select id="variants">
+                <option selected>1</option><option>2</option><option>3</option><option>4</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button class="btn btn--primary" id="start" type="button" disabled>Пройти онлайн</button>
+            <button class="btn" id="print" type="button" disabled>Распечатать с ключом</button>
+          </div>
+          <p class="step__hint" id="summary"></p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ Прохождение ============ -->
+    <section id="quiz" class="view" hidden>
+      <div class="quiz-head">
+        <button class="link-btn no-print" data-action="back" type="button">← К настройкам</button>
+        <h1 id="quiz-title"></h1>
+        <p class="quiz-meta" id="quiz-meta"></p>
+        <div class="progress" aria-hidden="true"><div class="progress__bar" id="progress"></div></div>
+      </div>
+      <form id="quiz-form" novalidate>
+        <ol class="questions" id="questions"></ol>
+        <div class="result" id="result" hidden aria-live="polite"></div>
+        <div class="actions actions--sticky">
+          <button class="btn btn--primary" id="check" type="submit">Проверить ответы</button>
+          <button class="btn" id="reshuffle" type="button">Новый тест</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ Печать ============ -->
+    <section id="printout" class="view" hidden>
+      <div class="no-print print-bar">
+        <button class="link-btn" data-action="back" type="button">← К настройкам</button>
+        <div class="actions">
+          <button class="btn" id="reprint" type="button">Перемешать заново</button>
+          <button class="btn btn--primary" type="button" onclick="window.print()">Печать</button>
+        </div>
+      </div>
+      <div id="sheets"></div>
+    </section>
+  </main>
+
+  <footer class="footer no-print">
+    <div class="wrap">Темы составлены по примерным рабочим программам ФГОС, используемым в школах Москвы. Задачи генерируются в браузере — интернет не нужен.</div>
+  </footer>
+
+  <script src="js/engine.js"></script>
+  <script src="js/data/math.js"></script>
+  <script src="js/data/algebra.js"></script>
+  <script src="js/data/russian.js"></script>
+  <script src="js/data/literature.js"></script>
+  <script src="js/data/english.js"></script>
+  <script src="js/data/science.js"></script>
+  <script src="js/data/humanities.js"></script>
+  <script src="js/data/informatics.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
